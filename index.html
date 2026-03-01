@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HVS-GNN — Interactive Paper Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-brand">HVS-GNN</div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link active">Home</a>
+            <a href="#problem" class="nav-link">Problem</a>
+            <a href="#gnn-basics" class="nav-link">GNN Basics</a>
+            <a href="#spiking" class="nav-link">Spiking Neurons</a>
+            <a href="#architecture" class="nav-link">Architecture</a>
+            <a href="#examples" class="nav-link">Examples</a>
+            <a href="#results" class="nav-link">Results</a>
+        </div>
+        <a href="https://arxiv.org/abs/2412.09379" target="_blank" class="nav-paper-link">Read Paper ↗</a>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar"></div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="section hero-section">
+        <div id="hero-canvas-container"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Interactive Explorer</div>
+            <h1 class="hero-title">
+                <span class="title-line">Hybrid Variable Spiking</span>
+                <span class="title-line gradient-text">Graph Neural Networks</span>
+            </h1>
+            <p class="hero-subtitle">for Energy-Efficient Scientific Machine Learning</p>
+            <div class="hero-authors">
+                <span>Isha Jain</span><span class="dot">·</span>
+                <span>Shailesh Garg</span><span class="dot">·</span>
+                <span>Shaurya Shriyam</span><span class="dot">·</span>
+                <span>Souvik Chakraborty</span>
+            </div>
+            <div class="hero-venue">Journal of the Mechanics and Physics of Solids · IIT Delhi</div>
+            <div class="hero-actions">
+                <a href="#problem" class="btn btn-primary">Start Learning →</a>
+                <a href="https://github.com/csccm-iitd/Hybrid-Variable-Spiking-Graph-Neural-Networks" target="_blank" class="btn btn-secondary">View Code ↗</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2>The Problem</h2>
+                <p class="section-desc">Why do we need energy-efficient Graph Neural Networks?</p>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card" data-aos="fade-up">
+                    <div class="problem-icon">
+                        <div id="energy-viz" class="mini-canvas"></div>
+                    </div>
+                    <h3>Energy Crisis in AI</h3>
+                    <p>As graphs scale in size and GNN architectures grow in complexity, the energy budget required for training and inference becomes unsustainable — limiting deployment on edge devices and real-time systems.</p>
+                </div>
+                <div class="problem-card" data-aos="fade-up" data-delay="200">
+                    <div class="problem-icon">
+                        <div id="scale-viz" class="mini-canvas"></div>
+                    </div>
+                    <h3>Scale Challenge</h3>
+                    <p>Computational mechanics datasets often involve large irregular domains, molecular structures, and complex microstructures with hundreds of interacting elements — demanding efficient processing.</p>
+                </div>
+                <div class="problem-card" data-aos="fade-up" data-delay="400">
+                    <div class="problem-icon">
+                        <div id="regression-viz" class="mini-canvas"></div>
+                    </div>
+                    <h3>Regression Accuracy</h3>
+                    <p>Traditional spiking neurons with binary outputs struggle on regression tasks. The key challenge: how to achieve energy efficiency through sparsity without sacrificing prediction accuracy?</p>
+                </div>
+            </div>
+            <div class="key-insight">
+                <div class="insight-icon">💡</div>
+                <div>
+                    <strong>Key Insight:</strong> The brain processes information using sparse electrical spikes — what if we could bring this biological efficiency to Graph Neural Networks while maintaining their regression accuracy?
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GNN Basics Section -->
+    <section id="gnn-basics" class="section dark-section">
+        <div class="section-container">
+            <div class="section-header light">
+                <span class="section-number">02</span>
+                <h2>Graph Neural Networks</h2>
+                <p class="section-desc">Understanding the foundation: message passing on graphs</p>
+            </div>
+            <div class="gnn-layout">
+                <div class="gnn-visual">
+                    <div id="gnn-canvas" class="canvas-container"></div>
+                    <div class="canvas-controls">
+                        <button class="control-btn active" data-step="graph">Graph Structure</button>
+                        <button class="control-btn" data-step="message">Message Passing</button>
+                        <button class="control-btn" data-step="aggregate">Aggregation</button>
+                        <button class="control-btn" data-step="update">Update</button>
+                    </div>
+                </div>
+                <div class="gnn-explanation">
+                    <div class="step-content active" id="step-graph">
+                        <h3>Graph Structure</h3>
+                        <p>A graph G = (V, E) consists of nodes V and edges E. In computational mechanics, nodes represent physical entities (grains, atoms) and edges represent connections (boundaries, bonds).</p>
+                        <div class="equation-block">
+                            <span class="eq-label">Node features:</span>
+                            <code>h<sub>i</sub><sup>(l)</sup> ∈ ℝ<sup>d</sup></code>
+                        </div>
+                    </div>
+                    <div class="step-content" id="step-message">
+                        <h3>Message Passing</h3>
+                        <p>Each node collects "messages" from its neighbors. The message function computes information to send based on both the sender and receiver features.</p>
+                        <div class="equation-block">
+                            <span class="eq-label">Messages:</span>
+                            <code>m<sub>i</sub><sup>(l)</sup> = A<sub>j∈N(i)</sub> U₁(h<sub>i</sub><sup>(l-1)</sup>, h<sub>j</sub><sup>(l-1)</sup>, F̄<sub>ij</sub>)</code>
+                        </div>
+                    </div>
+                    <div class="step-content" id="step-aggregate">
+                        <h3>Aggregation</h3>
+                        <p>Messages from all neighbors are combined using a permutation-invariant function (sum, mean, max, or combinations like PNA).</p>
+                        <div class="equation-block">
+                            <span class="eq-label">PNAConv:</span>
+                            <code>Uses mean, sum, min, max aggregators with degree-dependent scalers</code>
+                        </div>
+                    </div>
+                    <div class="step-content" id="step-update">
+                        <h3>Update</h3>
+                        <p>Each node updates its feature vector based on the aggregated messages and its own previous features.</p>
+                        <div class="equation-block">
+                            <span class="eq-label">Update:</span>
+                            <code>h<sub>i</sub><sup>(l)</sup> = U₂(h<sub>i</sub><sup>(l-1)</sup>, m<sub>i</sub><sup>(l)</sup>)</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="gnn-variants">
+                <h3>GNN Variants Used in This Paper</h3>
+                <div class="variant-cards">
+                    <div class="variant-card">
+                        <h4>SAGEConv</h4>
+                        <div class="equation-block small">
+                            <code>h<sub>i</sub><sup>(l)</sup> = W₁h<sub>i</sub><sup>(l-1)</sup> + W₂ · AGG(h<sub>j</sub><sup>(l-1)</sup>)</code>
+                        </div>
+                        <p>Samples and aggregates neighbor features with learnable weights. Used in Examples 1 & 2.</p>
+                    </div>
+                    <div class="variant-card">
+                        <h4>PNAConv</h4>
+                        <div class="equation-block small">
+                            <code>Multiple aggregators × degree scalers</code>
+                        </div>
+                        <p>Principal Neighborhood Aggregation — combines mean, sum, min, max with scaling. Used in Example 3.</p>
+                    </div>
+                    <div class="variant-card">
+                        <h4>Global Mean Pool</h4>
+                        <div class="equation-block small">
+                            <code>õ = (1/n) Σ h<sub>i</sub><sup>(L)</sup></code>
+                        </div>
+                        <p>Aggregates all node features to a single graph-level vector for scalar prediction tasks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spiking Neurons Section -->
+    <section id="spiking" class="section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2>Spiking Neurons</h2>
+                <p class="section-desc">From biological inspiration to Variable Spiking Neurons</p>
+            </div>
+
+            <div class="neuron-comparison">
+                <div class="neuron-panel" id="lif-panel">
+                    <div class="neuron-header lif">
+                        <h3>LIF Neuron</h3>
+                        <span class="neuron-badge">Binary Spikes</span>
+                    </div>
+                    <div id="lif-canvas" class="neuron-canvas"></div>
+                    <div class="neuron-equations">
+                        <div class="eq-step">
+                            <span class="eq-num">1</span>
+                            <div>
+                                <strong>Integrate:</strong>
+                                <code>M(t̄) = βM(t̄-1) + z(t̄)</code>
+                            </div>
+                        </div>
+                        <div class="eq-step">
+                            <span class="eq-num">2</span>
+                            <div>
+                                <strong>Fire:</strong>
+                                <code>y(t̄) = 1 if M(t̄) ≥ T<sub>h</sub>, else 0</code>
+                            </div>
+                        </div>
+                        <div class="eq-step">
+                            <span class="eq-num">3</span>
+                            <div>
+                                <strong>Reset:</strong>
+                                <code>M(t̄) ← 0 after spike</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="neuron-issue">
+                        <strong>⚠ Limitation:</strong> Binary outputs (0 or 1) lose magnitude information — poor for regression tasks.
+                    </div>
+                </div>
+
+                <div class="vs-divider">
+                    <span>VS</span>
+                </div>
+
+                <div class="neuron-panel" id="vsn-panel">
+                    <div class="neuron-header vsn">
+                        <h3>VSN (Variable Spiking Neuron)</h3>
+                        <span class="neuron-badge highlight">Graded Spikes ✓</span>
+                    </div>
+                    <div id="vsn-canvas" class="neuron-canvas"></div>
+                    <div class="neuron-equations">
+                        <div class="eq-step">
+                            <span class="eq-num">1</span>
+                            <div>
+                                <strong>Integrate:</strong>
+                                <code>M(t̄) = βM(t̄-1) + z(t̄)</code>
+                            </div>
+                        </div>
+                        <div class="eq-step">
+                            <span class="eq-num">2</span>
+                            <div>
+                                <strong>Gate:</strong>
+                                <code>ỹ(t̄) = 1 if M(t̄) ≥ T<sub>h</sub>, else 0</code>
+                            </div>
+                        </div>
+                        <div class="eq-step highlight-step">
+                            <span class="eq-num">3</span>
+                            <div>
+                                <strong>Graded Output:</strong>
+                                <code>y(t̄) = σ(z(t̄) · ỹ(t̄))</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="neuron-advantage">
+                        <strong>✓ Key Innovation:</strong> Applies continuous activation σ to the gated input — preserving magnitude while maintaining sparse firing.
+                    </div>
+                </div>
+            </div>
+
+            <div class="surrogate-section">
+                <h3>Surrogate Gradient for Training</h3>
+                <p>The spike generation step is non-differentiable (a step function). During backpropagation, we approximate its gradient using a smooth <strong>fast-sigmoid</strong> surrogate function — enabling end-to-end training with standard optimizers.</p>
+                <div class="surrogate-visual">
+                    <div id="surrogate-canvas" class="canvas-medium"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section dark-section">
+        <div class="section-container">
+            <div class="section-header light">
+                <span class="section-number">04</span>
+                <h2>The HVS-GNN Architecture</h2>
+                <p class="section-desc">Selectively replacing activations for the optimal energy-accuracy tradeoff</p>
+            </div>
+
+            <div class="arch-key-idea">
+                <div class="idea-content">
+                    <h3>The Hybrid Approach</h3>
+                    <p>Using <em>only</em> VSNs throughout degrades accuracy. Using <em>no</em> spiking neurons wastes energy. The HVS-GNN strategically places VSNs at select activation positions — achieving the best of both worlds.</p>
+                </div>
+            </div>
+
+            <div class="arch-diagram">
+                <div id="arch-canvas" class="canvas-large"></div>
+            </div>
+
+            <div class="arch-configs">
+                <h3>Configuration Variants</h3>
+                <p class="config-desc">Different positions of VSN replacement yield different accuracy-efficiency tradeoffs:</p>
+                <div class="config-grid">
+                    <div class="config-card">
+                        <div class="config-name">A-GNN</div>
+                        <div class="config-label">Baseline</div>
+                        <div class="config-bar-container">
+                            <div class="config-bar accuracy" style="width: 100%"></div>
+                        </div>
+                        <span class="config-metric">All artificial activations</span>
+                    </div>
+                    <div class="config-card">
+                        <div class="config-name">HLIF-GNN</div>
+                        <div class="config-label">LIF Variant</div>
+                        <div class="config-bar-container">
+                            <div class="config-bar lif" style="width: 60%"></div>
+                        </div>
+                        <span class="config-metric">Binary spikes — limited regression ability</span>
+                    </div>
+                    <div class="config-card active">
+                        <div class="config-name">HVS-GNN</div>
+                        <div class="config-label">Proposed</div>
+                        <div class="config-bar-container">
+                            <div class="config-bar vsn" style="width: 92%"></div>
+                        </div>
+                        <span class="config-metric">Graded spikes — near-baseline accuracy + sparse</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spiking-loss-section">
+                <h3>Spiking Loss Function (SLF)</h3>
+                <p>To further promote sparsity, an optional penalty on spiking activity is added to the loss:</p>
+                <div class="equation-block large center">
+                    <code>L<sub>slf</sub> = α<sub>L</sub> · L<sub>vanilla</sub> + β<sub>L</sub> · S</code>
+                </div>
+                <div class="slf-explanation">
+                    <div class="slf-term">
+                        <code>S</code>
+                        <span>= spikes produced / total possible spikes</span>
+                    </div>
+                    <div class="slf-term">
+                        <code>α<sub>L</sub>, β<sub>L</sub></code>
+                        <span>= tunable weights balancing accuracy vs. sparsity</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section id="examples" class="section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-number">05</span>
+                <h2>Application Examples</h2>
+                <p class="section-desc">Three challenging computational mechanics problems</p>
+            </div>
+
+            <div class="example-tabs">
+                <button class="example-tab active" data-example="1">
+                    <span class="tab-num">Ex. 1</span>
+                    <span class="tab-title">α-Titanium Polycrystal</span>
+                </button>
+                <button class="example-tab" data-example="2">
+                    <span class="tab-num">Ex. 2</span>
+                    <span class="tab-title">Terfenol-D Magnetostriction</span>
+                </button>
+                <button class="example-tab" data-example="3">
+                    <span class="tab-num">Ex. 3</span>
+                    <span class="tab-title">Graphene Membrane</span>
+                </button>
+            </div>
+
+            <div class="example-content active" id="example-1">
+                <div class="example-layout">
+                    <div class="example-viz">
+                        <div id="example1-canvas" class="canvas-container"></div>
+                    </div>
+                    <div class="example-details">
+                        <h3>α-Titanium Polycrystal Properties</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Dataset</span>
+                                <span class="detail-value">1,200 Microstructure Volume Elements</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Textures</span>
+                                <span class="detail-value">12 crystallographic (A–L)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Nodes</span>
+                                <span class="detail-value">Individual grains</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Edges</span>
+                                <span class="detail-value">Shared grain boundaries</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Node Features</span>
+                                <span class="detail-value">4 orientation components + grain size (5D)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Outputs</span>
+                                <span class="detail-value">Stiffness (k) & Yield strength (f<sub>y</sub>)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">GNN Type</span>
+                                <span class="detail-value">SAGEConv</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Training</span>
+                                <span class="detail-value">630 MVEs, LR=0.001, 600 epochs</span>
+                            </div>
+                        </div>
+                        <div class="arch-flow">
+                            <span class="flow-block linear">L(32)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₁</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block conv">SC(64)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₂</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block conv">SC(64)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₃</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block pool">GMP</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(64)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₄</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(16)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₅</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(1)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-content" id="example-2">
+                <div class="example-layout">
+                    <div class="example-viz">
+                        <div id="example2-canvas" class="canvas-container"></div>
+                    </div>
+                    <div class="example-details">
+                        <h3>Terfenol-D Magnetostriction Prediction</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Dataset</span>
+                                <span class="detail-value">2,287 3D polycrystalline structures</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Grains per structure</span>
+                                <span class="detail-value">12–297 grains</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Nodes</span>
+                                <span class="detail-value">Grains</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Edges</span>
+                                <span class="detail-value">Grain boundaries</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Node Features</span>
+                                <span class="detail-value">3 Euler angles + size + neighbors (5D)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">External Input</span>
+                                <span class="detail-value">Magnetic field direction</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Output</span>
+                                <span class="detail-value">Effective magnetostriction λ<sup>eff</sup><sub>xx</sub></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Training</span>
+                                <span class="detail-value">1,831 samples, LR=0.0005, 500 epochs</span>
+                            </div>
+                        </div>
+                        <div class="arch-flow">
+                            <span class="flow-block conv">MP₁</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(40)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₁</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block conv">MP₂</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(3)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₂</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block pool">Flat+Cat</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(1024)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₃</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(128)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A₄</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">L(1)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-content" id="example-3">
+                <div class="example-layout">
+                    <div class="example-viz">
+                        <div id="example3-canvas" class="canvas-container"></div>
+                    </div>
+                    <div class="example-details">
+                        <h3>Graphene Membrane Stress Field</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Dataset</span>
+                                <span class="detail-value">2,000 porous graphene membranes</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Membrane Size</span>
+                                <span class="detail-value">127.9Å × 127.8Å</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Nodes</span>
+                                <span class="detail-value">Individual atoms</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Edges</span>
+                                <span class="detail-value">Atomic bonds (cutoff 1.92Å)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Input</span>
+                                <span class="detail-value">2D atomic coordinates</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Output</span>
+                                <span class="detail-value">Per-atom tensile stress field</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">GNN Type</span>
+                                <span class="detail-value">PNAConv + GRU (14 layers)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Training</span>
+                                <span class="detail-value">1,400 samples, LR=0.001, 240 epochs</span>
+                            </div>
+                        </div>
+                        <div class="arch-flow">
+                            <span class="flow-block repeat">[</span>
+                            <span class="flow-block conv">PNA(50)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block linear">GRU(50)</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block pool">BN</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block act">A</span>
+                            <span class="flow-block repeat">] ×14</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-block conv">PNA(1)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="section dark-section">
+        <div class="section-container">
+            <div class="section-header light">
+                <span class="section-number">06</span>
+                <h2>Results & Performance</h2>
+                <p class="section-desc">HVS-GNN achieves competitive accuracy with significant energy savings</p>
+            </div>
+
+            <div class="results-dashboard">
+                <div class="result-metric-cards">
+                    <div class="metric-card">
+                        <div class="metric-value" data-target="82">0%</div>
+                        <div class="metric-label">Max Sparsity Achieved</div>
+                        <div class="metric-desc">Up to 82% of spikes suppressed</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" data-target="96" data-suffix="%">0%</div>
+                        <div class="metric-label">Accuracy Retained</div>
+                        <div class="metric-desc">Near-baseline regression performance</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value special">3/3</div>
+                        <div class="metric-label">Examples Validated</div>
+                        <div class="metric-desc">Consistent across all benchmarks</div>
+                    </div>
+                </div>
+
+                <div class="results-table-container">
+                    <h3>Comparative Results (MSE ×10⁻³)</h3>
+                    <div class="results-table-wrapper">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Example</th>
+                                    <th>Metric</th>
+                                    <th>A-GNN</th>
+                                    <th>HLIF-GNN</th>
+                                    <th class="highlight-col">HVS-GNN</th>
+                                    <th>Spiking Activity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td rowspan="2">Ex. 1: Titanium</td>
+                                    <td>Stiffness (in-dist)</td>
+                                    <td>2.11</td>
+                                    <td>3.72 – 5.34</td>
+                                    <td class="highlight-col best">1.79 – 2.48</td>
+                                    <td><div class="activity-bar"><div class="activity-fill" style="width:37%"></div><span>37%</span></div></td>
+                                </tr>
+                                <tr>
+                                    <td>Stiffness (out-dist)</td>
+                                    <td>6.69</td>
+                                    <td>25.67 – 256.62</td>
+                                    <td class="highlight-col">10.00 – 49.01</td>
+                                    <td><div class="activity-bar"><div class="activity-fill" style="width:37%"></div><span>37%</span></div></td>
+                                </tr>
+                                <tr class="table-divider">
+                                    <td>Ex. 2: Terfenol-D</td>
+                                    <td>Magnetostriction</td>
+                                    <td>9.67*</td>
+                                    <td>7.08 – 9.88</td>
+                                    <td class="highlight-col best">4.29 – 8.77</td>
+                                    <td><div class="activity-bar"><div class="activity-fill" style="width:18%"></div><span>18%</span></div></td>
+                                </tr>
+                                <tr class="table-divider">
+                                    <td>Ex. 3: Graphene</td>
+                                    <td>Stress Field</td>
+                                    <td>0.535**</td>
+                                    <td>1.334</td>
+                                    <td class="highlight-col">0.576 – 0.645</td>
+                                    <td><div class="activity-bar"><div class="activity-fill" style="width:59%"></div><span>59%</span></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-notes">
+                        <span>* ×10⁻⁹ for Example 2</span>
+                        <span>** Absolute MSE for Example 3</span>
+                        <span class="best-indicator">■ Best or near-best result</span>
+                    </div>
+                </div>
+
+                <div class="sparsity-viz">
+                    <h3>Spiking Activity Visualization</h3>
+                    <p>Lower spiking activity = more sparsity = more energy saved. The HVS-GNN achieves significant sparsity while maintaining accuracy.</p>
+                    <div id="sparsity-canvas" class="canvas-medium"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Takeaways Section -->
+    <section id="takeaways" class="section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-number">07</span>
+                <h2>Key Takeaways</h2>
+                <p class="section-desc">What makes HVS-GNN significant?</p>
+            </div>
+            <div class="takeaway-grid">
+                <div class="takeaway-card">
+                    <div class="takeaway-num">1</div>
+                    <h3>Graded Spikes Solve Regression</h3>
+                    <p>By applying a continuous activation to gated inputs, VSNs produce non-binary spikes that preserve magnitude information — enabling accurate regression unlike binary LIF neurons.</p>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-num">2</div>
+                    <h3>Hybrid Design is Optimal</h3>
+                    <p>Selectively placing VSNs (not everywhere) achieves the best accuracy-efficiency tradeoff. Full spiking hurts accuracy; no spiking wastes energy.</p>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-num">3</div>
+                    <h3>40–82% Sparsity</h3>
+                    <p>Across all three examples, HVS-GNN suppresses 40–82% of neuron activations, directly translating to energy savings — especially impactful on neuromorphic hardware.</p>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-num">4</div>
+                    <h3>Plug-and-Play Flexibility</h3>
+                    <p>Any existing GNN can be converted to its HVS variant with minimal effort — simply replace select activations with VSNs. No architectural redesign needed.</p>
+                </div>
+            </div>
+
+            <div class="final-cta">
+                <h3>Explore Further</h3>
+                <div class="cta-links">
+                    <a href="https://arxiv.org/abs/2412.09379" target="_blank" class="btn btn-primary">Read the Full Paper ↗</a>
+                    <a href="https://github.com/csccm-iitd/Hybrid-Variable-Spiking-Graph-Neural-Networks" target="_blank" class="btn btn-secondary">GitHub Repository ↗</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>Interactive visualization for <em>"Hybrid Variable Spiking Graph Neural Networks for Energy-Efficient Scientific Machine Learning"</em></p>
+            <p class="footer-authors">Isha Jain, Shailesh Garg, Shaurya Shriyam, Souvik Chakraborty — IIT Delhi</p>
+            <p class="footer-journal">Published in Journal of the Mechanics and Physics of Solids</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
